@@ -12,21 +12,38 @@
     exit(EXIT_FAILURE); \
 } \
 
-#define ASSERT_INSTRUCTION_NODE_POINTER(ptr)    if((ptr)){ \
-        ptr->next=*head;\
-        *head=ptr;\
+#define ASSERT_INSTRUCTION_NODE_POINTER(ptr) if (*head==NULL && (ptr)) { \
+   ptr->next=*head; \
+   *head=ptr; \
+   *tail=ptr; \
+}\
+else if((ptr)){ \
+    (*tail)->next=ptr; \
+    ptr->next=NULL; \
+    *tail=ptr; \
 } \
 
 
 enum reader_int {LINE_READ,ENDOFLINE=EOF};
 
-//reverses the linked-list
-struct ins *reverse(struct ins *);
-
 //reads each line in the source file
-enum reader_int reader(struct ins **head);
+enum reader_int reader(struct ins **head,struct ins **tail);
+/////////////////////////////////////////
 
-enum reader_int reader(struct ins **head){
+struct ins *tokenizer(void){
+    struct ins *head=NULL;
+    struct ins *tail=NULL;
+    int lineStatus;
+    //int line=1;
+
+    while (lineStatus!=ENDOFLINE) {
+        //printf("Reading line --> %d\n",line++);
+        lineStatus=reader(&head,&tail);
+    }
+    return head;
+};
+
+enum reader_int reader(struct ins **head,struct ins **tail){
      struct ins *new=NULL;
      int c;
      int allocFactor=1;
@@ -81,14 +98,11 @@ enum reader_int reader(struct ins **head){
      return LINE_READ;
 };
 
-struct ins *tokenizer(void){
-    struct ins *head=NULL;
-    int lineStatus;
-    //int line=1;
-
-    while (lineStatus!=ENDOFLINE) {
-        //printf("Reading line --> %d\n",line++);
-        lineStatus=reader(&head);
+int main(void){
+    struct ins *first=tokenizer();
+    while(first){
+        printf("instruction %s\n",first->instruction);
+        first=first->next;
     }
-    return head;
-};
+    return 0;
+}

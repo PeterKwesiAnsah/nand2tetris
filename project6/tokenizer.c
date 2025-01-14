@@ -7,10 +7,7 @@
 
 #define NEWLINE '\n'
 #define STARTCOMMENT '/'
-#define ASSERT_MALLOC(ptr,msg)     if((ptr)==NULL){ \
-    fprintf(stderr, msg); \
-    exit(EXIT_FAILURE); \
-} \
+
 
 #define ASSERT_INSTRUCTION_NODE_POINTER(ptr) if (*head==NULL && (ptr)) { \
    ptr->next=*head; \
@@ -88,6 +85,7 @@ enum reader_int reader(struct ins **head,struct ins **tail){
         int sizeofNewBlock=sizeof(struct ins) + (++allocFactor * MIN_INS_LEN) + 1;
         void *temp=realloc(new, sizeofNewBlock);
         ASSERT_MALLOC(temp, "failed to allocate memory\n")
+        ///realloc frees the original pointer when it returns a new memory location
         if(temp!=new){
             new=temp;
         }
@@ -97,12 +95,3 @@ enum reader_int reader(struct ins **head,struct ins **tail){
      ASSERT_INSTRUCTION_NODE_POINTER(new)
      return LINE_READ;
 };
-
-int main(void){
-    struct ins *first=tokenizer();
-    while(first){
-        printf("instruction %s\n",first->instruction);
-        first=first->next;
-    }
-    return 0;
-}

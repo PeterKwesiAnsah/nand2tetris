@@ -35,10 +35,10 @@ void append(struct Tokens *tokenXS, struct token *p){
 };
 
 
-int main(void){
-   struct ins *cur=tokenizer();
-    //initizializing tokens dynamic array
-   struct Tokens ins = {0, 0,NULL};
+struct Tokens *langParser(struct ins *tokens){
+   struct ins *cur=tokens;
+   //initizializing tokens dynamic array
+   struct Tokens static ins = {0, 0,NULL};
 
     while(cur){
         int startOfIns=cur->instruction[0];
@@ -53,9 +53,16 @@ int main(void){
             ASSERT_MALLOC(AIns->tokenType.address, "failed to allocate memory\n")
             memcpy(AIns->tokenType.address, ++curInstructionAddress,cur->n);
             append(&ins, AIns);
-            //add to map
         }else if (startOfIns== CHAR_START_LABEL) {
-            //add to map
+             struct token *labelIns=(struct token*)malloc(sizeof(struct token));
+             ASSERT_MALLOC(labelIns, "failed to allocate memory\n")
+             labelIns->tokenKind=LABEL;
+             labelIns->tokenType.address=(char *)calloc(1,sizeof(*cur->instruction)*cur->n);
+             ASSERT_MALLOC(labelIns->tokenType.address, "failed to allocate memory\n")
+             char *p=cur->instruction;
+            //TODO: free memory occupied by link node??
+             memcpy(labelIns->tokenType.address, ++p, cur->n-2);
+             append(&ins, labelIns);
         }else {
             //C instruction -> dest=comp;jump
             struct token *CIns=(struct token*)malloc(sizeof(struct token));
@@ -63,6 +70,7 @@ int main(void){
             CIns->tokenKind=C;
             CIns->tokenType.c=(struct CIns*)calloc(1,sizeof(struct CIns));
             ASSERT_MALLOC(CIns->tokenType.c, "failed to allocate memory\n");
+
 
             char *insP=cur->instruction;
             char curChar=*insP;
@@ -102,10 +110,9 @@ int main(void){
                 memcpy(dest, src, nullCharP-src);
             }
             append(&ins, CIns);
-            //add to map
         }
         cur=cur->next;
     }
 
-    return 0;
+    return &ins;
 }

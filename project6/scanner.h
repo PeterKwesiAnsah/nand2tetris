@@ -4,5 +4,5 @@
 #define SCANNER_H
 #include "parser.h"
 void labelScan(struct Tokens *);
-void gotoScan(struct Tokens *);
+void variableScan(struct Tokens *);
 #endif

@@ -1,6 +1,7 @@
 #ifndef PARSE_H
 #define PARSE_H
 #include <stddef.h>
+#include "tokenizer.h"
 enum Kind {A,C,LABEL};
 struct AIns {
     int n;//number of the address characters
@@ -27,4 +28,5 @@ size_t capacity;
 struct token **darray;
 };
 
+struct Tokens *langParser(struct ins *);
 #endif

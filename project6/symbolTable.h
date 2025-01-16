@@ -15,7 +15,7 @@ struct symTable {
 };
 unsigned int *getSymValue(char *);
 unsigned int *setSymValue(char *,unsigned int);
-void initSymTable(void);
+struct symTable *initSymTable(void);
 #endif
 //int * get(const char *key)
 //void set (const char *key,int value)

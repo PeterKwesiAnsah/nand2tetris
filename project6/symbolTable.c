@@ -1,10 +1,10 @@
 #include "symbolTable.h"
+#include "scanner.h"
 #include "tokenizer.h"
 #include <stddef.h>
 #include <string.h>
 #include <stdlib.h>
 #include <sys/_types/_null.h>
-#define TABLE_SIZE 57
 #define FILL_KVN(node)  node->key=key;\
                         node->value=value;\
                         return &node->value;\
@@ -46,9 +46,10 @@ unsigned hash(const char *v){
     return h;
 }
 
-void initSymTable(void){
+struct symTable *initSymTable(void){
     hackLangTable.runtime=calloc(TABLE_SIZE,sizeof(*hackLangTable.runtime));
     ASSERT_MALLOC(hackLangTable.runtime, "Failed to Initialize Symtable\n");
+    return &hackLangTable;
 };
 
 struct KVN *createKVN(struct KVN *head){

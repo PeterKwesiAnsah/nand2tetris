@@ -4,6 +4,6 @@
 #include "symbolTable.h"
 #include "parser.h"
 #define CODE_H
-void translateA(struct Tokens *,struct symTable *);
-void translateC(struct Tokens *,struct symTable *);
+void translateA(struct Tokens *);
+void translateC(struct Tokens *);
 #endif

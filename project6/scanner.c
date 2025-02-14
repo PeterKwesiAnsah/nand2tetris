@@ -2,6 +2,7 @@
 #include "scanner.h"
 #include "symbolTable.h"
 #include "parser.h"
+#include <stdio.h>
 #include <string.h>
 #include <sys/_types/_null.h>
 #include <stdlib.h>
@@ -9,29 +10,35 @@
 
 
 unsigned address=VARIABLE_ADDRESS;
-void labelScan(struct Tokens *ins){
-    int i;
+int HACK_MEM_ADDRESS=-1;
+void labelScan(struct Tokens *ins){;
     int count=ins->count;
-    for(i=0;i<count;i++){
+    for(int i=0;i<count;i++){
         if(ins->darray[i]->tokenKind==LABEL){
-            //set goto address to sym table
-            //each instruction has line i+1
-            //so the next instruction has line i+2
-            setSymValue(ins->darray[i]->tokenType.address, i+2);
+            //Naive Solution:under the assumption that there's a C or A ins ahead.
+            //Ideal Solution:search if there's a C or A ins ahead
+            setSymValue(ins->darray[i]->tokenType.address, (unsigned)(HACK_MEM_ADDRESS+1));
+        }
+        else {
+            HACK_MEM_ADDRESS++;
         }
     }
 }
 
+
 void variableScan(struct Tokens *ins){
     int i;
     for(i=0;i<ins->count;i++){
-        char *variable=ins->darray[i]->tokenType.address;
-        char *p_end=NULL;
-        if(*variable=='0'&& strlen(variable)==1){
+
+        if(!(ins->darray[i]->tokenKind==A))
             continue;
-        }
-        unsigned long numStr=strtoul(variable, &p_end,10);
-        if(ins->darray[i]->tokenKind==A && getSymValue(variable)==NULL && numStr==0){
+
+        char *variable = ins->darray[i]->tokenType.address;
+        char *p_end = NULL;
+        unsigned long strToLong = strtoul(variable, &p_end, 10);
+        if(*p_end=='\0')
+            continue;
+        if(getSymValue(variable)==NULL && strToLong==0){
             setSymValue(variable, address++);
         }
     }

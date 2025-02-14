@@ -73,22 +73,14 @@ struct Tokens *langParser(struct ins *tokens){
 
 
             char *insP=cur->instruction;
-            char curChar=*insP;
 
-            char *destOperatorP=NULL;
-            char *jumpOperatorP=NULL;
+            char *destOperatorP=strchr(insP, DEST_OPERATOR);
+            char *jumpOperatorP=strchr(insP, JUMP_OPERATOR);
             char *nullCharP=cur->instruction+cur->n;
 
-            while(curChar){
-                if(curChar==DEST_OPERATOR){
-                destOperatorP=insP;
-                }else if (curChar==JUMP_OPERATOR) {
-                    jumpOperatorP=insP;
-                }
-                insP++;
-                curChar=*insP;
-            }
-
+            //0;JMP
+            //dest null
+            //comp 0
             if(destOperatorP){
                 //handing dest
                 //TODO: we can use parameteriezed macro
@@ -99,15 +91,21 @@ struct Tokens *langParser(struct ins *tokens){
                 {
                     //TODO: we can use parameteriezed macro
                     char *dest=CIns->tokenType.c->comp;
-                    char *src=++destOperatorP;
+                    char *src=destOperatorP+1;
                     memcpy(dest, src,(jumpOperatorP ? jumpOperatorP:nullCharP)-src);
                 }
             }
             if(jumpOperatorP) {
+                //move comp only when it has not been handled or dest is null
                 //TODO: we can use parameteriezed macro
                 char *dest=CIns->tokenType.c->jump;
-                char *src=++jumpOperatorP;
+                char *src=jumpOperatorP+1;
                 memcpy(dest, src, nullCharP-src);
+                if(!destOperatorP){
+                    char *dest=CIns->tokenType.c->comp;
+                    char *src=jumpOperatorP-1;
+                    memcpy(dest, src, jumpOperatorP-insP);
+                }
             }
             append(&ins, CIns);
         }

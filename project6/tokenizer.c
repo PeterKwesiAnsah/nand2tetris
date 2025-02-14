@@ -30,11 +30,9 @@ enum reader_int reader(struct ins **head,struct ins **tail);
 struct ins *tokenizer(void){
     struct ins *head=NULL;
     struct ins *tail=NULL;
-    int lineStatus;
-    //int line=1;
+    int lineStatus=0;
 
     while (lineStatus!=ENDOFLINE) {
-        //printf("Reading line --> %d\n",line++);
         lineStatus=reader(&head,&tail);
     }
     return head;

@@ -8,7 +8,7 @@ CFLAGS = -Wall -O2
 SRCS = tokenizer.c parser.c symbolTable.c assembler.c scanner.c code.c
 
 # Executable name
-TARGET = parser
+TARGET = assembler
 
 # Default target
 all: $(TARGET)
